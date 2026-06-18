@@ -28,6 +28,14 @@ Open http://localhost:5000
 
 The SQLite `database.db` is auto-created on first run, along with seeded menu and 14 days of slots.
 
+## Assumptions
+
+- Maximum 50 food items per delivery slot.
+- Maximum 5 items per booking.
+- Users must log in before booking.
+- Four delivery slots are available each day.
+- Bookings can only be cancelled while status is Pending.
+
 ## Project Structure
 ```
 cloud-kitchen-booking/
