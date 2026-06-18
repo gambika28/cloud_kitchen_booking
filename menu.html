@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% block title %}Menu{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <div>
+    <h3 class="mb-0">Menu</h3>
+    <small class="text-muted">Slot: {{ slot.date.strftime('%d %b %Y') }} · {{ slot.slot_time }}</small>
+  </div>
+  <div>
+    <span class="badge bg-info">Items in cart: <span id="cart-count">{{ total_qty }}</span> / {{ max_items }}</span>
+    <a class="btn btn-primary btn-sm" href="{{ url_for('main.cart') }}">Go to Cart →</a>
+  </div>
+</div>
+
+<div class="row g-3">
+  {% for item in items %}
+  <div class="col-md-4">
+    <div class="card shadow-sm">
+      <div class="card-body">
+        <h5>{{ item.name }}</h5>
+        <p class="text-muted mb-2">₹{{ '%.2f'|format(item.price) }}</p>
+        <form class="cart-form d-flex gap-2" data-item-id="{{ item.id }}">
+          <input type="number" name="qty" value="{{ cart.get(item.id|string, 0) }}" min="0" max="{{ max_items }}" class="form-control form-control-sm" style="width:80px;">
+          <button class="btn btn-sm btn-success">Update</button>
+        </form>
+      </div>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+{% endblock %}
+{% block scripts %}
+<script>
+document.querySelectorAll('.cart-form').forEach(f => {
+  f.addEventListener('submit', async e => {
+    e.preventDefault();
+    const id = f.dataset.itemId;
+    const qty = f.querySelector('[name=qty]').value;
+    const res = await fetch(`/cart/add/${id}`, { method: 'POST', body: new URLSearchParams({qty}) });
+    const data = await res.json();
+    if (!res.ok) { alert(data.error || 'Error'); return; }
+    document.getElementById('cart-count').textContent = data.total;
+  });
+});
+</script>
+{% endblock %}

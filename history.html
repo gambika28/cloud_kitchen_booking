@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block title %}Booking History{% endblock %}
+{% block content %}
+<h3>My Bookings</h3>
+{% if not bookings %}
+  <div class="alert alert-info">No bookings yet.</div>
+{% else %}
+<div class="table-responsive">
+<table class="table table-hover align-middle">
+  <thead class="table-light">
+    <tr><th>Booking ID</th><th>Date</th><th>Slot</th><th>Items</th><th>Qty</th><th>Status</th><th>Actions</th></tr>
+  </thead>
+  <tbody>
+    {% for b in bookings %}
+    <tr>
+      <td>{{ b.booking_id }}</td>
+      <td>{{ b.slot.date.strftime('%d %b %Y') }}</td>
+      <td>{{ b.slot.slot_time }}</td>
+      <td>
+        {% for bi in b.items %}{{ bi.menu_item.name }} x{{ bi.quantity }}{% if not loop.last %}, {% endif %}{% endfor %}
+      </td>
+      <td>{{ b.total_items }}</td>
+      <td>
+        <span class="badge bg-{% if b.status=='Pending' %}warning{% elif b.status=='Preparing' %}info{% elif b.status=='Completed' %}success{% else %}secondary{% endif %}">{{ b.status }}</span>
+      </td>
+      <td>
+        <a class="btn btn-sm btn-outline-primary" href="{{ url_for('main.booking_details', booking_id=b.booking_id) }}">View</a>
+        {% if b.status == 'Pending' %}
+        <form method="post" action="{{ url_for('main.cancel', booking_id=b.booking_id) }}" class="d-inline"
+              onsubmit="return confirm('Cancel this booking?');">
+          <button class="btn btn-sm btn-outline-danger">Cancel</button>
+        </form>
+        {% endif %}
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+</div>
+{% endif %}
+{% endblock %}

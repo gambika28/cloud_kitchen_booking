@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block title %}Delivery Slots{% endblock %}
+{% block content %}
+<h3>Available Slots — {{ selected_date.strftime('%d %b %Y') }}</h3>
+<a class="btn btn-link mb-3" href="{{ url_for('main.dashboard') }}">← Change date</a>
+<div class="row g-3">
+  {% for s in slots %}
+  <div class="col-md-6">
+    <div class="card shadow-sm {% if s.is_full %}border-danger{% else %}border-success{% endif %}">
+      <div class="card-body">
+        <h5 class="card-title">{{ s.slot_time }}</h5>
+        <p class="mb-1">Capacity: {{ s.booked_items }} / {{ s.max_capacity }}</p>
+        <div class="progress mb-3" style="height:8px;">
+          <div class="progress-bar {% if s.is_full %}bg-danger{% else %}bg-success{% endif %}"
+               style="width: {{ (s.booked_items / s.max_capacity * 100)|round }}%"></div>
+        </div>
+        {% if s.is_full %}
+          <a class="btn btn-outline-danger" href="{{ url_for('main.select_slot', slot_id=s.id) }}">Slot Full — See Options</a>
+        {% else %}
+          <a class="btn btn-success" href="{{ url_for('main.select_slot', slot_id=s.id) }}">Book this slot ({{ s.remaining }} left)</a>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+{% endblock %}

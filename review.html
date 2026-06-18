@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block title %}Review Order{% endblock %}
+{% block content %}
+<h3>Review Order</h3>
+<div class="card shadow-sm mb-3">
+  <div class="card-body">
+    <p><strong>Delivery:</strong> {{ slot.date.strftime('%d %b %Y') }} · {{ slot.slot_time }}</p>
+    <table class="table">
+      <thead><tr><th>Item</th><th>Qty</th><th>Subtotal</th></tr></thead>
+      <tbody>
+        {% for row in items %}
+        <tr><td>{{ row.item.name }}</td><td>{{ row.qty }}</td><td>₹{{ '%.2f'|format(row.subtotal) }}</td></tr>
+        {% endfor %}
+      </tbody>
+      <tfoot><tr><th>Total ({{ total_qty }} items)</th><th></th><th>₹{{ '%.2f'|format(grand) }}</th></tr></tfoot>
+    </table>
+  </div>
+</div>
+<form method="post" action="{{ url_for('main.place_order') }}">
+  <a class="btn btn-outline-secondary" href="{{ url_for('main.cart') }}">← Back</a>
+  <button class="btn btn-success">Place Order</button>
+</form>
+{% endblock %}
